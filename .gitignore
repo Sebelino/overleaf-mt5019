@@ -1,0 +1,13 @@
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.pdf
+*.synctex.gz
+*.gitignore.tex
+.Rproj.user
+*.Rproj
+*.RData
+*.Rhistory

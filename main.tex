@@ -1,0 +1,249 @@
+\documentclass{article}
+\title{Problem set, MT5017}
+\author{Ville Sebastian Olsson}
+\usepackage[a4paper,margin=2em]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{dsfont}
+\usepackage{mathtools}
+\usepackage[parfill]{parskip}
+\usepackage{hyperref} % Clickable ToC
+\usepackage{tikz}
+\usepackage[breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{csvsimple}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{csquotes}
+\graphicspath{ {./images/} }
+\hypersetup{colorlinks}
+
+\usepackage{sebelino-mathlib} % Custom sty file
+\setcounter{secnumdepth}{0} % Disable numbering
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Derive odds ratio}
+Consider a \(2\times 2\) contingency table with categorical variables \(X,Y\in\{0,1\}\).
+\begin{align*}
+    & \OR{Y=1} \\
+    =& \frac{\odds{Y=1|X=1}}{\odds{Y=1|X=0}} \\
+    =& \frac{P(Y=1|X=1)/(1-P(Y=1|X=1))}{P(Y=1|X=0)/(1-P(Y=1|X=0))} \\
+    =& \frac{P(Y=1|X=1)/P(Y=0|X=1)}{P(Y=1|X=0)/P(Y=0|X=0)} \\
+    =& \frac{P(Y=1|X=1)P(Y=0|X=0)}{P(Y=1|X=0)P(Y=0|X=1)} \\
+    =& \frac{\frac{P(Y=1,X=1)}{P(X=1)}\cdot \frac{P(Y=0,X=0)}{P(X=0)}}{\frac{P(Y=1,X=0)}{P(X=0)}\cdot \frac{P(Y=0,X=1)}{P(X=1)}} \\
+    =& \frac{P(Y=1,X=1) P(Y=0,X=0)}{P(Y=1,X=0)P(Y=0,X=1)} \\
+    =& \frac{\pi_{11} \pi_{00}}{\pi_{01}\pi_{10}} \\
+\end{align*}
+
+\section{Loglinear model}
+
+ACM example, p.346:
+
+\((ACM)\) model:
+\[\forall i,j,k:\hat\mu_{ijk} = n_{ijk}\]
+\begin{align*}
+    & N_{ijk} \sim \text{Po}(\mu_{ijk}) \\
+    \Rightarrow& E[N_{ijk}] = \mu_{ijk} \\
+    \Rightarrow& E[N_{ijk}] = \exp(\lambda+\lambda_i^A+\lambda_j^C+\lambda_k^M+\lambda_{ij}^{AC}+\lambda_{ik}^{AM}+\lambda_{jk}^{CM}+\lambda_{ijk}^{ACM}) \\
+    \Rightarrow& \ln E[N_{ijk}] \\
+    =& \lambda+\lambda_i^A+\lambda_j^C+\lambda_k^M+\lambda_{ij}^{AC}+\lambda_{ik}^{AM}+\lambda_{jk}^{CM}+\lambda_{ijk}^{ACM} \\
+    & \begin{cases}
+    \ln\mu_{111} =& \lambda+\lambda_1^A+\lambda_1^C+\lambda_1^M+\lambda_{11}^{AC}+\lambda_{11}^{AM}+\lambda_{11}^{CM}+\lambda_{111}^{ACM} \\
+    \vdots \\
+    \ln\mu_{222} =& \lambda+\lambda_2^A+\lambda_2^C+\lambda_2^M+\lambda_{22}^{AC}+\lambda_{22}^{AM}+\lambda_{22}^{CM}+\lambda_{222}^{ACM} \\
+    \end{cases} \\
+\end{align*}
+\begin{align*}
+    & \begin{cases}
+    n_{111} =& 911 \\
+    n_{112} =& 538 \\
+    n_{121} =& 44 \\
+    n_{122} =& 456 \\
+    n_{211} =& 3 \\
+    n_{212} =& 43 \\
+    n_{221} =& 2 \\
+    n_{222} =& 279
+    \end{cases} \\
+\end{align*}
+
+\((AM,CM)\) model:
+\begin{align*}
+    & N_{ijk} \sim \text{Po}(\mu_{ijk}) \\
+    \Rightarrow& E[N_{ijk}] = \exp(\lambda+\lambda_i^A+\lambda_j^C+\lambda_k^M+\lambda_{ij}^{AC}+\lambda_{ik}^{AM}+\lambda_{jk}^{CM}+\lambda_{ijk}^{ACM}) \\
+    \Rightarrow& \ln E[N_{ijk}] \\
+    =& \lambda+\lambda_i^A+\lambda_j^C+\lambda_k^M+\lambda_{ij}^{AC}+\lambda_{ik}^{AM}+\lambda_{jk}^{CM}+\lambda_{ijk}^{ACM} \\
+    =& \lambda+\lambda_i^A+\lambda_j^C+\lambda_k^M+\lambda_{ik}^{AM}+\lambda_{jk}^{CM} \\
+\end{align*}
+
+\section{Conditional odds ratios}
+
+Agresti, p. 345: "The two-factor parameters relate directly to the conditional odds ratios.
+To illustrate [...]
+\[\ln \theta_{ijk} = \ln\frac{\mu_{ijk}\mu_{i+1,j+1,k}}{\mu_{i+1,jk}\mu_{i,j+1,k}} = \lambda_{ij}^{XY}+\lambda_{+1,j+1}^{XY}-\lambda_{i,j+1}^{XY}-\lambda_{i+1,j}^{XY}\]
+"
+
+\begin{align*}
+    & \ln \theta_{XY(k)} \\
+    =& \ln \frac{\pi_{11|k}\pi_{00|k}}{\pi_{10|k}\pi_{01|k}} \\
+    =& \ln \frac{P(X=1,Y=1|Z=k)P(X=0,Y=0|Z=k)}{P(X=1,Y=0|Z=k)P(X=0,Y=1|Z=k)} \\
+    =& \ln \frac{\frac{P(X=1,Y=1,Z=k)}{P(Z=k)}\cdot\frac{P(X=0,Y=0,Z=k)}{P(Z=k)}}{\frac{P(X=1,Y=0,Z=k)}{P(Z=k)}\cdot \frac{P(X=0,Y=1,Z=k)}{P(Z=k)}} \\
+    =& \ln \frac{P(X=1,Y=1,Z=k)P(X=0,Y=0,Z=k)}{P(X=1,Y=0,Z=k)P(X=0,Y=1,Z=k)} \\
+    =& \ln \frac{\pi_{11k}\pi_{00k}}{\pi_{10k}\pi_{01k}} \\
+    =& \ln \frac{\mu_{11k}\mu_{00k}}{\mu_{10k}\mu_{01k}} \\
+    =& (\lambda+\lambda_1^X+\lambda_1^Y+\lambda_k^Z+\lambda_{11}^{XY}+\lambda_{1k}^{XZ}+\lambda_{1k}^{YZ}+\lambda_{11k}^{XYZ})\\
+    +& (\lambda+\lambda_0^X+\lambda_0^Y+\lambda_k^Z+\lambda_{00}^{XY}+\lambda_{0k}^{XZ}+\lambda_{0k}^{YZ}+\lambda_{00k}^{XYZ})\\
+    -& (\lambda+\lambda_1^X+\lambda_0^Y+\lambda_k^Z+\lambda_{10}^{XY}+\lambda_{1k}^{XZ}+\lambda_{0k}^{YZ}+\lambda_{10k}^{XYZ})\\
+    -& (\lambda+\lambda_0^X+\lambda_1^Y+\lambda_k^Z+\lambda_{01}^{XY}+\lambda_{0k}^{XZ}+\lambda_{1k}^{YZ}+\lambda_{01k}^{XYZ})\\
+    =& \lambda_{11}^{XY}+\lambda_{00}^{XY}-\lambda_{10}^{XY}-\lambda_{01}^{XY}+\lambda_{11k}^{XYZ}+\lambda_{00k}^{XYZ}-\lambda_{10k}^{XYZ}-\lambda_{01k}^{XYZ} \\
+    =& \lambda_{11}^{XY}+\lambda_{11k}^{XYZ} & (\text{With baseline level zero}) \\
+    =& \lambda_{11}^{XY} & (\text{If no 3rd-order interactions}) \\
+\end{align*}
+
+\section{Assignment 3}
+
+\[0.66 = \theta_{XY(kl)} = \frac{\odds{X=1|Y=1,Z=k,V=l}}{\odds{X=1|Y=0,Z=k,V=l}} = \frac{\odds{Y=1|X=1,Z=k,V=l}}{\odds{Y=1|X=0,Z=k,V=l}} = \frac{\pi_{11kl}\cdot \pi_{00kl}}{\pi_{10kl}\cdot \pi_{01kl}} \]
+\[\frac{\odds{Y=1|X=1,Z=k,V=l}}{\odds{Y=0|X=1,Z=k,V=l}} = \frac{\pi_{11kl}^2}{\pi_{10kl}^2} \]
+\[\frac{\odds{X=1|Y=1,Z=k,V=l}}{\odds{X=0|Y=1,Z=k,V=l}} = \frac{\pi_{11kl}^2}{\pi_{01kl}^2} \]
+
+\begin{align*}
+    & \ln \theta_{XY(kl)} \\
+    =& \ln \frac{\pi_{11|kl}\pi_{00|kl}}{\pi_{10|kl}\pi_{01|kl}} \\
+    =& \ln \frac{P(X=1,Y=1|Z=k,V=l)P(X=0,Y=0|Z=k,V=l)}{P(X=1,Y=0|Z=k,V=l)P(X=0,Y=1|Z=k,V=l)} \\
+    =& \ln \frac{\frac{P(X=1,Y=1,Z=k,V=l)}{P(Z=k,V=l)}\cdot\frac{P(X=0,Y=0,Z=k,V=l)}{P(Z=k,V=l)}}{\frac{P(X=1,Y=0,Z=k,V=l)}{P(Z=k,V=l)}\cdot \frac{P(X=0,Y=1,Z=k,V=l)}{P(Z=k,V=l)}} \\
+    =& \ln \frac{P(X=1,Y=1,Z=k,V=l)P(X=0,Y=0,Z=k,V=l)}{P(X=1,Y=0,Z=k,V=l)P(X=0,Y=1,Z=k,V=l)} \\
+    =& \ln \frac{\pi_{11kl}\pi_{00kl}}{\pi_{10kl}\pi_{01kl}} \\
+    =& \ln \frac{\mu_{11kl}\mu_{00kl}}{\mu_{10kl}\mu_{01kl}} \\
+    =& (\lambda+\lambda_1^X+\lambda_1^Y+\lambda_k^Z+\lambda_l^V+\lambda_{11}^{XY}+\lambda_{1k}^{XZ}+\lambda_{1l}^{XV}+\lambda_{1k}^{YZ}+\lambda_{1l}^{YV}+\lambda_{kl}^{ZV}+\lambda_{\geq3}(1,1,k,l))\\
+    +& (\lambda+\lambda_0^X+\lambda_0^Y+\lambda_k^Z+\lambda_l^V+\lambda_{00}^{XY}+\lambda_{0k}^{XZ}+\lambda_{0l}^{XV}+\lambda_{0k}^{YZ}+\lambda_{0l}^{YV}+\lambda_{kl}^{ZV}+\lambda_{\geq3}(0,0,k,l))\\
+    -& (\lambda+\lambda_0^X+\lambda_1^Y+\lambda_k^Z+\lambda_l^V+\lambda_{01}^{XY}+\lambda_{0k}^{XZ}+\lambda_{0l}^{XV}+\lambda_{1k}^{YZ}+\lambda_{1l}^{YV}+\lambda_{kl}^{ZV}+\lambda_{\geq3}(0,1,k,l))\\
+    -& (\lambda+\lambda_1^X+\lambda_0^Y+\lambda_k^Z+\lambda_l^V+\lambda_{10}^{XY}+\lambda_{1k}^{XZ}+\lambda_{1l}^{XV}+\lambda_{0k}^{YZ}+\lambda_{0l}^{YV}+\lambda_{kl}^{ZV}+\lambda_{\geq3}(1,0,k,l))\\
+    =& \lambda_{11}^{XY}+\lambda_{00}^{XY}-\lambda_{10}^{XY}-\lambda_{01}^{XY}+\lambda_{\geq3}(1,1,k,l)+\lambda_{\geq3}(0,0,k,l)+\lambda_{\geq3}(0,1,k,l)+\lambda_{\geq3}(1,0,k,l) \\
+    =& \lambda_{11}^{XY}+\lambda_{00}^{XY}-\lambda_{10}^{XY}-\lambda_{01}^{XY} & (\text{No 3rd-order interactions}) \\
+    =& \lambda_{11}^{XY} & (\text{With baseline level zero}) \\
+\end{align*}
+
+\pagebreak
+\begin{align*}
+    & \frac{\odds{\text{old}|\text{smoker},Z=k,V=l}}{\odds{\text{old}|\text{non-smoker},Z=k,V=l}} \\
+    =& \frac{\odds{X=1|Y=1,Z=k,V=l}}{\odds{X=1|Y=0,Z=k,V=l}} \\
+    =& \frac{\frac{P(X=1|Y=1,Z=k,V=l)}{1-P(X=1|Y=1,Z=k,V=l)}}{\frac{P(X=1|Y=0,Z=k,V=l)}{1-P(X=1|Y=0,Z=k,V=l)}} \\
+    =& \frac{P(X=1|Y=1,Z=k,V=l)/P(X=0|Y=1,Z=k,V=l)}{P(X=1|Y=0,Z=k,V=l)/P(X=0|Y=0,Z=k,V=l)} \\
+    =& \frac{P(X=1|Y=1,Z=k,V=l)P(X=0|Y=0,Z=k,V=l)}{P(X=1|Y=0,Z=k,V=l)P(X=0|Y=1,Z=k,V=l)} \\
+    =& \frac{\frac{P(X=1,Y=1,Z=k,V=l)}{P(Y=1,Z=k,V=l)}\cdot \frac{P(X=0,Y=0,Z=k,V=l)}{P(Y=0,Z=k,V=l)}}{\frac{P(X=1,Y=0,Z=k,V=l)}{P(Y=0,Z=k,V=l)}\cdot\frac{P(X=0,Y=1,Z=k,V=l)}{P(Y=1,Z=k,V=l)}} \\
+    =& \frac{\frac{\pi_{11kl}}{\pi_{+1kl}}\cdot \frac{\pi_{00kl}}{\pi_{+0kl}}}{\frac{\pi_{10kl}}{\pi_{+0kl}}\cdot\frac{\pi_{01kl}}{\pi_{+1kl}}} \\
+    =& \frac{\pi_{11kl}\cdot\pi_{00kl}}{\pi_{10kl}\cdot\pi_{01kl}} \\
+    =& \theta_{XY(kl)}
+\end{align*}
+\begin{align*}
+    & \frac{\odds{\text{smoker}|\text{old},Z=k,V=l}}{\odds{\text{smoker}|\text{young},Z=k,V=l}} \\
+    =& \frac{\odds{Y=1|X=1,Z=k,V=l}}{\odds{Y=1|X=0,Z=k,V=l}} \\
+    =& \frac{\frac{P(Y=1|X=1,Z=k,V=l)}{1-P(Y=1|X=1,Z=k,V=l)}}{\frac{P(Y=1|X=0,Z=k,V=l)}{1-P(Y=1|X=0,Z=k,V=l)}} \\
+    =& \frac{P(Y=1|X=1,Z=k,V=l)/P(Y=0|X=1,Z=k,V=l)}{P(Y=1|X=0,Z=k,V=l)/P(Y=0|X=0,Z=k,V=l)} \\
+    =& \frac{P(Y=1|X=1,Z=k,V=l)P(Y=0|X=0,Z=k,V=l)}{P(Y=1|X=0,Z=k,V=l)P(Y=0|X=1,Z=k,V=l)} \\
+    =& \frac{\frac{P(X=1,Y=1,Z=k,V=l)}{P(X=1,Z=k,V=l)}\cdot \frac{P(X=0,Y=0,Z=k,V=l)}{P(X=0,Z=k,V=l)}}{\frac{P(X=0,Y=1,Z=k,V=l)}{P(X=0,Z=k,V=l)}\cdot \frac{P(X=1,Y=0,Z=k,V=l)}{P(X=1,Z=k,V=l)}} \\
+    =& \frac{\frac{\pi_{11kl}}{\pi_{1+kl}}\cdot \frac{\pi_{00kl}}{\pi_{0+kl}}}{\frac{\pi_{01kl}}{\pi_{0+kl}}\cdot \frac{\pi_{10kl}}{\pi_{1+kl}}} \\
+    =& \frac{\pi_{11kl}\cdot \pi_{00kl}}{\pi_{01kl}\cdot \pi_{10kl}} \\
+    =& \frac{\pi_{11kl}\cdot \pi_{00kl}}{\pi_{10kl}\cdot \pi_{01kl}} \\
+    =& \theta_{XY(kl)}
+\end{align*}
+\begin{align*}
+    & \frac{\odds{\text{smoker}|\text{old},Z=k,V=l}}{\odds{\text{non-smoker}|\text{old},Z=k,V=l}} \\
+    =& \frac{\odds{Y=1|X=1,Z=k,V=l}}{\odds{Y=0|X=1,Z=k,V=l}} \\
+    =& \frac{\frac{P(Y=1|X=1,Z=k,V=l)}{1-P(Y=1|X=1,Z=k,V=l)}}{\frac{P(Y=0|X=1,Z=k,V=l)}{1-P(Y=0|X=1,Z=k,V=l)}} \\
+    =& \frac{P(Y=1|X=1,Z=k,V=l)/P(Y=0|X=1,Z=k,V=l)}{P(Y=0|X=1,Z=k,V=l)/P(Y=1|X=1,Z=k,V=l)} \\
+    =& \frac{P(Y=1|X=1,Z=k,V=l)P(Y=1|X=1,Z=k,V=l)}{P(Y=0|X=1,Z=k,V=l)P(Y=0|X=1,Z=k,V=l)} \\
+    =& \frac{\frac{P(X=1,Y=1,Z=k,V=l)}{P(X=1,Z=k,V=l)}\cdot\frac{P(X=1,Y=1,Z=k,V=l)}{P(X=1,Z=k,V=l)}}{\frac{P(X=1,Y=0,Z=k,V=l)}{P(X=1,Z=k,V=l)}\cdot\frac{P(X=1,Y=0,Z=k,V=l)}{P(X=1,Z=k,V=l)}} \\
+    =& \frac{\frac{\pi_{11kl}}{\pi_{1+kl}}\cdot\frac{\pi_{11kl}}{\pi_{1+kl}}}{\frac{\pi_{10kl}}{\pi_{1+kl}}\cdot\frac{\pi_{10kl}}{\pi_{1+kl}}} \\
+    =& \frac{\pi_{11kl}\cdot\pi_{11kl}}{\pi_{10kl}\cdot\pi_{10kl}} \\
+    =& \frac{\pi_{11kl}^2}{\pi_{10kl}^2} \\
+\end{align*}
+
+\section{Hypergeometric distribution}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{l|c c c}
+ & \(Y=1\) & \(Y=0\) & \(\sum\) \\ \hline
+\(X=1\) & \(N_{11}\) & \(N_{10}\) & \(n_{1+}\) \\
+\(X=0\) & \(N_{01}\) & \(N_{00}\) & \(n_{0+}\) \\
+\(\sum\) & \(n_{+1}\) & \(n_{+0}\) & \(n\) \\
+\end{tabular}
+\label{tab:2way}
+\end{table}
+
+\begin{align*}
+\begin{cases}
+N_{11}+N_{10} = n_{1+} \\
+N_{01}+N_{00} = n_{0+} \\
+N_{11}+N_{01} = n_{+1} \\
+N_{10}+N_{00} = n_{+0} \\
+n_{+1}+n_{+0} = n \\
+n_{1+}+n_{0+} = n \\
+\end{cases} \\
+\Rightarrow
+\begin{cases}
+N_{10} = n_{1+}-N_{11} \\
+N_{01}+N_{00} = n_{0+} \\
+N_{11}+N_{01} = n_{+1} \\
+n_{1+}-N_{11}+N_{00} = n_{+0} \\
+n_{+1}+n_{+0} = n \\
+n_{1+}+n_{0+} = n \\
+\end{cases} \\
+\Rightarrow
+\begin{cases}
+N_{10} = n_{1+}-N_{11} \\
+N_{01} = n_{0+}-N_{00} \\
+N_{11}+n_{0+}-N_{00} = n_{+1} \\
+n_{1+}-N_{11}+N_{00} = n_{+0} \\
+n_{+1}+n_{+0} = n \\
+n_{1+}+n_{0+} = n \\
+\end{cases} \\
+\Rightarrow
+\begin{cases}
+N_{10} = n_{1+}-N_{11} \\
+N_{01} = n_{0+}-(N_{11}+n_{0+}-n_{+1}) \\
+N_{00} = N_{11}+n_{0+}-n_{+1} \\
+n_{1+}-N_{11}+(N_{11}+n_{0+}-n_{+1}) = n_{+0} \\
+n_{+1}+n_{+0} = n \\
+n_{1+}+n_{0+} = n \\
+\end{cases} \\
+\Rightarrow
+\begin{cases}
+N_{10} = n_{1+}-N_{11} \\
+N_{01} = n_{+1}-N_{11} \\
+N_{00} = N_{11}+n_{0+}-n_{+1} \\
+n = n_{1+}+n_{0+} \\
+n_{1+}+n_{0+}-n_{+1} = n_{+0} \\
+n_{+1}+n_{+0} = n_{1+}+n_{0+} \\
+\end{cases} \\
+\Rightarrow
+\begin{cases}
+N_{10} = n_{1+}-N_{11} \\
+N_{01} = n_{+1}-N_{11} \\
+N_{00} = N_{11}+n_{0+}-n_{+1} \\
+n = n_{1+}+n_{0+} \\
+n_{+0} = n_{1+}+n_{0+}-n_{+1}
+\end{cases} \\
+\end{align*}
+Plugging in the values in the original table:
+\begin{table}[h!]
+\centering
+\begin{tabular}{l|c c c}
+ & \(Y=1\) & \(Y=0\) & \(\sum\) \\ \hline
+\(X=1\) & \(N_{11}\) & \(n_{1+}-N_{11}\) & \(n_{1+}\) \\
+\(X=0\) & \(n_{+1}-N_{11}\) & \(N_{11}+n_{0+}-n_{+1}\) & \(n_{0+}\) \\
+\(\sum\) & \(n_{+1}\) & \(n_{1+}+n_{0+}-n_{+1}\) & \(n_{1+}+n_{0+}\) \\
+\end{tabular}
+\label{tab:2way}
+\end{table}
+Thus, with row and column sums fixed, \(N_{11}\) is the only random variable.
+
+\end{document}
